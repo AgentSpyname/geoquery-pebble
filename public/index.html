@@ -1,0 +1,32 @@
+<html>  
+<script src="/js/primus.js"></script>  
+<script>  
+(function () {
+  var primus = new Primus();
+
+  primus.on('data', function incoming(data) {
+    //
+    // thanks @doodlemoonch
+    // * https://twitter.com/doodlemoonch 
+    //
+    var list = document.querySelectorAll('ul')[0];
+    var item = document.createElement('li');
+
+    item.innerText = data;
+
+
+    list.removeChild(list.querySelectorAll('li:first-child')[0]);
+    list.appendChild(item);
+  });
+
+})();
+</script>  
+<ul>  
+<li></li>  
+<li></li>  
+<li></li>  
+<li></li>
+<li></li>
+
+</ul>  
+</html>  </html>  
