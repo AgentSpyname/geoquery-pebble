@@ -1,6 +1,4 @@
 //Includes Express and Feedparser
-//Tsting git...
-//test12345
 var express = require('express');
 var request = require('request');
 var FeedParser = require('feedparser')
