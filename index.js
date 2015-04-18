@@ -38,7 +38,8 @@ var toconvertdate = [];
 
 //test
 var test = [];
-
+var test2;
+var test3;
 
 //Decreped Vars
 var newdate = "nil2";
@@ -133,6 +134,18 @@ function feedprocess(){
                      date = String(toconvertdate)
                      console.log(route)
                       //Inserts our records to DB
+
+                      var query = client.query("SELECT * FROM DELAY");
+
+                      query.on('row', function(row){
+                         
+                        test2 = row.delay_title;
+
+                       
+                    });
+                      console.log(test3)
+                      console.log(test2)
+
                       client.query({
                       name: 'insert delay',
                       text: "INSERT INTO delay(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
@@ -170,13 +183,14 @@ function dataread(){
 var query = client.query("SELECT * FROM delay");
                     query.on('row', function(row) {
                     var test = [row.delay_title];
+
                     for (var i = 0; i < test.length; i++){
+                      if (date -= row.delay_date)
+                        console.log(row.delay_date)
+                        console.log("No new updates")
                               
                     }
-            
 
-                  
-                    
 
                     });
 
