@@ -25,16 +25,27 @@ var conString = 'postgres://localhost:5432/stopr';
 
 //Intializes Variables for Comparision Checks and Other Functions
 //These Variables Compare DB Entries with the Server
-var comparetitle;
-var comparedate;
-var comparesummary;
+var comparetitle = [];
+var comparedate = [];
+var comparesummary = [];
+
+//Defines Title, Route, Date and Summary for Later
+var title = [];
+var route = [];
+var date = [];
+var summary = [];
+var toconvertdate = []; 
+
+//test
+var test = [];
+
 
 //Decreped Vars
 var newdate = "nil2";
 var newsummary = "nil2";
 var newtitle;
 var convertdate;
-var toconvertdate;
+
 var checknewdate;
 var pchecknewdate;
 var p2checknewdate;
@@ -61,7 +72,9 @@ function refresh(){
 
   feedprocess();
 
-
+setTimeout(function(){
+    dataread();
+  },delay)
 
     setTimeout(arguments.callee, 20000); //Timeout of 20 Seconds
 })();
@@ -110,21 +123,29 @@ function feedprocess(){
                   //Assigns each item to an array.
                   title = [item.title]
                   route = [item.title] //Gets the title twice; we will need this for subscription
-                  date = [item.date]
+                  toconvertdate = [item.date]
                   summary = [item.summary]
 
+                 
                   for (var i = 0; i < route.length; i++) { //For each of the routes
                      route[i] = route[i].substr(7);//Subtracts the first 7 Charchters 
                      route[i] = route[i].slice(0,-39)//And the last 39 to create a route
+                     date = String(toconvertdate)
+                     console.log(route)
+                      //Inserts our records to DB
+                      client.query({
+                      name: 'insert delay',
+                      text: "INSERT INTO delay(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
+                      values: [title, date, summary, route]
+});
+
             
                      console.log("Title: " + title)
                      console.log("Route: " + route)
                   }
 
 
-                    for (var i = 0; i < date.length; i++) { 
-                    console.log("Date:" + date)
-                  }
+                    
 
                   for (var i = 0; i < summary.length; i++) {
                     console.log("Summary: " + summary)
@@ -132,42 +153,36 @@ function feedprocess(){
 
                   console.log("      ");//Even more whitespace
 
+
                   
-                    var query = client.query("SELECT * FROM delay");
-                    query.on('row', function(row) {
-                    comparetitle = [row.delay_title];
-                    comparedate = [row.delay_date];
-                    comparesummary = [row.delay_summary];
-                    console.log(comparetitle)
-                    console.log(comparesummary)
-                    console.log(comparedate)
-
-                    });
-                  
-
-                  for (var i = 0; i < title.length; i++) {//For each item again
-
-                  if (title == comparetitle && date == comparedate){
-                      console.log("No new updates.");
-
-                    }
-
-                  if (comparedate != date){
-                    console.log("Send this to DB.");
-                  }
-
-                  noupdates = "no" //There are updates so we make sure to set this var
-
-                  }
+                    
                   }
                }
              );
       
-
+  
 }
 
 
 
+function dataread(){
+
+var query = client.query("SELECT * FROM delay");
+                    query.on('row', function(row) {
+                    var test = [row.delay_title];
+                    for (var i = 0; i < test.length; i++){
+                              
+                    }
+            
+
+                  
+                    
+
+                    });
+
+               
+                
+}
 
 //Starts the webserver
 var server = app.listen(app.get('port'), function () {
