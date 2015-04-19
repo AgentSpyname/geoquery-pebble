@@ -28,6 +28,7 @@ var conString = 'postgres://localhost:5432/stopr';
 var comparetitle = [];
 var comparedate = [];
 var comparesummary = [];
+var results = [];
 
 //Defines Title, Route, Date and Summary for Later
 var title = [];
@@ -38,7 +39,8 @@ var toconvertdate = [];
 
 //test
 var test = [];
-
+var test2;
+var test3;
 
 //Decreped Vars
 var newdate = "nil2";
@@ -121,35 +123,39 @@ function feedprocess(){
       while (item = stream.read()) {
        //Checks each item from the RSS 
                   //Assigns each item to an array.
-                  title = [item.title]
-                  route = [item.title] //Gets the title twice; we will need this for subscription
+                  toconverttitle = [item.title]
+                  toconvertroute = [item.title] //Gets the title twice; we will need this for subscription
                   toconvertdate = [item.date]
-                  summary = [item.summary]
-
+                  toconvertsummary = [item.summary]
                  
-                  for (var i = 0; i < route.length; i++) { //For each of the routes
-                     route[i] = route[i].substr(7);//Subtracts the first 7 Charchters 
-                     route[i] = route[i].slice(0,-39)//And the last 39 to create a route
-                     date = String(toconvertdate)
-                     console.log(route)
-                      //Inserts our records to DB
-                      client.query({
-                      name: 'insert delay',
-                      text: "INSERT INTO delay(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
+
+               
+                  for (var i = 0; i < toconverttitle.length; i++) { //For each of the routes
+                     toconvertroute[i] = toconvertroute[i].substr(7);//Subtracts the first 7 Charchters 
+                     toconvertroute[i] = toconvertroute[i].slice(0,-39)//And the last 39 to create a route
+                     date = String(toconvertdate);
+                     title = String(toconverttitle);
+                     summary = String(toconvertsummary);
+                     route = String(toconvertroute);
+
+               }
+
+
+                  client.query({
+                      name: 'insert to server check DB',
+                      text: "INSERT INTO server(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
                       values: [title, date, summary, route]
 });
 
+
+                      
             
                      console.log("Title: " + title)
+                     console.log("Date:" + date)
                      console.log("Route: " + route)
-                  }
-
-
-                    
-
-                  for (var i = 0; i < summary.length; i++) {
+  
                     console.log("Summary: " + summary)
-                  }
+               
 
                   console.log("      ");//Even more whitespace
 
@@ -166,21 +172,46 @@ function feedprocess(){
 
 
 function dataread(){
+         //Inserts our records to DB
 
-var query = client.query("SELECT * FROM delay");
-                    query.on('row', function(row) {
-                    var test = [row.delay_title];
-                    for (var i = 0; i < test.length; i++){
-                              
-                    }
-            
+                      var query = client.query("SELECT * FROM delay ");
+                      query.on("row", function (row, result) {
+                      result.addRow(row);
+                      });
 
-                  
-                    
+                      query.on("end", function (result) {
+                      console.log("From DB")
+                      console.log(JSON.stringify(result.rows, null, "    "));
+                      comparetitle = [result.delay_title]
+                      console.log(comparetitle)
 
-                    });
+                      });
 
-               
+                      var query2 = client.query("SELECT delay_title, delay_date FROM server ");
+                      title = []
+                     query2.on('row', function(row) {
+
+                          
+                          title.push(row.delay_title);
+
+                        
+                        
+                        });
+
+                      query2.on("end", function (result) {
+                      
+                      console.log("From server:")
+                      
+                      for (var i = 0; i < title.length; i++) {
+                       console.log(title[i]);
+                        }
+
+                      });
+
+
+                      console.log(test)
+                   
+
                 
 }
 
