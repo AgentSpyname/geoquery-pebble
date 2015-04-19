@@ -128,6 +128,7 @@ function feedprocess(){
                   toconvertdate = [item.date]
                   toconvertsummary = [item.summary]
                  
+<<<<<<< HEAD
 
                
                   for (var i = 0; i < toconverttitle.length; i++) { //For each of the routes
@@ -144,6 +145,29 @@ function feedprocess(){
                   client.query({
                       name: 'insert to server check DB',
                       text: "INSERT INTO server(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
+=======
+                  for (var i = 0; i < route.length; i++) { //For each of the routes
+                     route[i] = route[i].substr(7);//Subtracts the first 7 Charchters 
+                     route[i] = route[i].slice(0,-39)//And the last 39 to create a route
+                     date = String(toconvertdate)
+                     console.log(route)
+                      //Inserts our records to DB
+
+                      var query = client.query("SELECT * FROM DELAY");
+
+                      query.on('row', function(row){
+                         
+                        test2 = row.delay_title;
+
+                       
+                    });
+                      console.log(test3)
+                      console.log(test2)
+
+                      client.query({
+                      name: 'insert delay',
+                      text: "INSERT INTO delay(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
+>>>>>>> 04114d1dac2612d9657ec02c4a1f213c6d4b9bf4
                       values: [title, date, summary, route]
 });
 
@@ -174,6 +198,7 @@ function feedprocess(){
 function dataread(){
          //Inserts our records to DB
 
+<<<<<<< HEAD
                       var query = client.query("SELECT * FROM delay ");
                       query.on("row", function (row, result) {
                       result.addRow(row);
@@ -184,6 +209,19 @@ function dataread(){
                       console.log(JSON.stringify(result.rows, null, "    "));
                       comparetitle = [result.delay_title]
                       console.log(comparetitle)
+=======
+var query = client.query("SELECT * FROM delay");
+                    query.on('row', function(row) {
+                    var test = [row.delay_title];
+
+                    for (var i = 0; i < test.length; i++){
+                      if (date -= row.delay_date)
+                        console.log(row.delay_date)
+                        console.log("No new updates")
+                              
+                    }
+
+>>>>>>> 04114d1dac2612d9657ec02c4a1f213c6d4b9bf4
 
                       });
 
