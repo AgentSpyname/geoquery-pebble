@@ -28,7 +28,7 @@ var conString = 'postgres://localhost:5432/stopr';
 var comparetitle = [];
 var comparedate = [];
 var comparesummary = [];
-var results = [];
+var compareroute = [];
 
 //Defines Title, Route, Date and Summary for Later
 var title = [];
@@ -37,32 +37,12 @@ var date = [];
 var summary = [];
 var toconvertdate = []; 
 
-//test
-var test = [];
-var test2;
-var test3;
-
-//Decreped Vars
-var newdate = "nil2";
-var newsummary = "nil2";
-var newtitle;
-var convertdate;
-
-var checknewdate;
-var pchecknewdate;
-var p2checknewdate;
-var noupdates = "yes";
-var newcomparedate;
-
-
 //Initiliazes PG Database Connection
 var client = new pg.Client(conString);
 client.connect();
 
 //Executes Main Functions
-console.log("My Route:" + routeno);
 refresh();
-
 
 //Excutes all other functions with a delay every 20 Seconds, used to make sure we can go back here if there is an error.
 function refresh(){
@@ -89,7 +69,7 @@ setTimeout(function(){
 //Funtion to Proces Data from Server
 function feedprocess(){
 
-  console.log("Requesting XML File from: " + xml)
+  console.log("Requesting XML File from: " + xml) 
     //Loads Feedparser
     var req = request(xml)
    ,feedparser = new FeedParser();
@@ -117,7 +97,7 @@ function feedprocess(){
     
 
 
-      console.log("   ")//Just creates some blank space before each item...
+      console.log("   ")//Just creates some blank space for easy to read entries for testing.
 
       
       while (item = stream.read()) {
@@ -133,87 +113,103 @@ function feedprocess(){
                   for (var i = 0; i < toconverttitle.length; i++) { //For each of the routes
                      toconvertroute[i] = toconvertroute[i].substr(7);//Subtracts the first 7 Charchters 
                      toconvertroute[i] = toconvertroute[i].slice(0,-39)//And the last 39 to create a route
-                     date = String(toconvertdate);
+                     //Convert eveything into a string. This is so the Databse does record each entries as an array with one item.
+                     date = String(toconvertdate); 
                      title = String(toconverttitle);
                      summary = String(toconvertsummary);
                      route = String(toconvertroute);
 
                }
 
-
+                  //Creates a query and sends the values to a special DB for later comparison
+                  //This is to elimate an issue with global variables
                   client.query({
                       name: 'insert to server check DB',
                       text: "INSERT INTO server(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
                       values: [title, date, summary, route]
 });
+                     
 
-
-                      
-            
                      console.log("Title: " + title)
                      console.log("Date:" + date)
                      console.log("Route: " + route)
-  
                     console.log("Summary: " + summary)
-               
-
                   console.log("      ");//Even more whitespace
-
-
-                  
-                    
                   }
                }
              );
-      
-  
 }
 
+//New function to check the data
+function dataread(){ 
 
-
-function dataread(){
-         //Inserts our records to DB
-
-                      var query = client.query("SELECT * FROM delay ");
-                      query.on("row", function (row, result) {
-                      result.addRow(row);
-                      });
-
-                      query.on("end", function (result) {
-                      console.log("From DB")
-                      console.log(JSON.stringify(result.rows, null, "    "));
-                      comparetitle = [result.delay_title]
-                      console.log(comparetitle)
-
-                      });
-
-                      var query2 = client.query("SELECT delay_title, delay_date FROM server ");
+                      var query = client.query("SELECT delay_title, delay_date FROM delay "); //starts a query to grab the info from a database to make sure we are not double commiting.
+                      //Clears the arrays from above; 
                       title = []
-                     query2.on('row', function(row) {
+                      date = []
+                      summary = []
+                      route = []
+                      query.on('row', function(row) {
 
-                          
+                          //Pushes each item to a Array
                           title.push(row.delay_title);
+                          date.push(row.delay_date)
+                          summary.push(row.delay_summary)
+                          route.push(row.route)
+                        });
 
-                        
+                      query.on("end", function (result) { //Ends our query but...
+                        //Starts the second query to check the info above
+                     var query2 = client.query("SELECT delay_title, delay_date FROM server ");
+                     query2.on('row', function(row) {
+                          //Pushes the second set of data
+                          comparetitle.push(row.delay_title);
+                          comparedate.push(row.delay_date)
+                          comparesummary.push(row.delay_summary)
+                          compareroute.push(row.route)
                         
                         });
 
                       query2.on("end", function (result) {
-                      
-                      console.log("From server:")
-                      console.log(title)
-                      
-                      for (var i = 0; i < title.length; i++) {
-                       console.log(title[i]);
-                }
+                        //Now its time to sort the information.
+                        date.sort() 
+                        comparedate.sort();
 
+                        left = []; both = []; right = []; 
+i = 0; j = 0;
+while (i < date.length && j < comparedate.length) {
+    if (date[i] < comparedate[j]) {
+        left.push(date[i]);
+        ++i;
+    } else if (comparedate[j] < date[i]) {
+        right.push(comparedate[j]);
+        ++j;
+    } else {
+        both.push(date[i]);
+        ++i; ++j;
+    }
+}
+while (i < date.length) {
+    left.push(date[i]);
+    ++i;
+}
+while (j < comparedate.length) {
+    right.push(comparedate[j]);
+    ++j;
+}
+console.log("Only on the DB")
+//If there is a record thats only on this Database, it means it is from a previous day. No need to commit that. 
+console.log(left)
+console.log("Only on the server")
+console.log(right)
+console.log("Are on both server and database.")
+//If the server has a record of this, and its in the databse don't do anything. Nothing
+console.log(both)
+
+                          
                       });
-
-
-                      console.log(test)
-                   
-
-                
+                      });
+             
 }
 
 //Starts the webserver
