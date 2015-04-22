@@ -172,39 +172,22 @@ function dataread(){
 
                       query2.on("end", function (result) {
                         //Now its time to sort the information.
-                        date.sort() 
-                        comparedate.sort();
+                        for (i = 0; i < date.length; i++) {
+                          var bl = false;
+                          for (j = 0; j < comparedate.length; j++) {
+                            if (date[i] == comparedate[j]) {
+                              bl = true;
 
-                        left = []; both = []; right = []; 
-i = 0; j = 0;
-while (i < date.length && j < comparedate.length) {
-    if (date[i] < comparedate[j]) {
-        left.push(date[i]);
-        ++i;
-    } else if (comparedate[j] < date[i]) {
-        right.push(comparedate[j]);
-        ++j;
-    } else {
-        both.push(date[i]);
-        ++i; ++j;
+    if (bl) console.log(" find match for : " + date[i]);
+    else console.log("test");
+
+                              }
+
     }
+
 }
-while (i < date.length) {
-    left.push(date[i]);
-    ++i;
-}
-while (j < comparedate.length) {
-    right.push(comparedate[j]);
-    ++j;
-}
-console.log("Only on the DB")
-//If there is a record thats only on this Database, it means it is from a previous day. No need to commit that. 
-console.log(left)
-console.log("Only on the server")
-console.log(right)
-console.log("Are on both server and database.")
-//If the server has a record of this, and its in the databse don't do anything. Nothing
-console.log(both)
+
+
 
                           
                       });

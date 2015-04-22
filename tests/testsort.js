@@ -1,32 +1,16 @@
-a = ["test", "test23", "test42"]
-b = ["test", "test1", "test99"] 
-a.sort()
-b.sort();
+var a = ["Date1", "Date2", "Date3","Date30"];
+var b = ["Date1", "Date20","Date30","Date2"];
 
-left = []; both = []; right = []; 
-i = 0; j = 0;
-while (i < a.length && j < b.length) {
-    if (a[i] < b[j]) {
-        left.push(a[i]);
-        ++i;
-    } else if (b[j] < a[i]) {
-        right.push(b[j]);
-        ++j;
-    } else {
-        both.push(a[i]);
-        ++i; ++j;
+for (i = 0; i < a.length; i++) {
+    var bl = false;
+    for (j = 0; j < b.length; j++) {
+        if (a[i] == b[j]) {
+            bl = true;
+
+        }
+
     }
-}
-while (i < a.length) {
-    left.push(a[i]);
-    ++i;
-}
-while (j < b.length) {
-    right.push(b[j]);
-    ++j;
-}
 
-console.log(left)
-console.log(right)
-console.log(both)
-
+    if (bl) console.log("find match for : " + a[i]);
+    else console.log("did not find match for:" + a[i]);
+}
