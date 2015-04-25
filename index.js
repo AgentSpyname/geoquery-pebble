@@ -38,10 +38,14 @@ var date = [];
 var summary = [];
 var toconvertdate = []; 
 
-//Initiliazes PG Database Connection
-var client = new pg.Client(conString);
-client.connect();
+//Prevents Duplicate COmmits
+var dontcommit = [];
 
+//More comparisions 
+var newconvertdate = [];
+var newconverttitle= [];
+var newconvertsummary = [];
+var newconvertrotue = [];
 //Executes Main Functions
 refresh();
 
@@ -69,6 +73,18 @@ setTimeout(function(){
 
 //Funtion to Proces Data from Server
 function feedprocess(){
+  done = false;
+  //Initiliazes PG Database Connection
+ client = new pg.Client(conString);
+client.connect();
+  console.log("Cleaning up...")
+      client.query({
+                      name: 'clean up the server db',
+                      text: "DELETE FROM server"
+});
+
+
+dontcommit = [];
 
   console.log("Requesting XML File from: " + xml) 
     //Loads Feedparser
@@ -104,38 +120,16 @@ function feedprocess(){
       while (item = stream.read()) {
        //Checks each item from the RSS 
                   //Assigns each item to an array.
-                  toconverttitle = [item.title]
-                  toconvertroute = [item.title] //Gets the title twice; we will need this for subscription
-                  toconvertdate = [item.date]
-                  toconvertsummary = [item.summary]
+
+                  title.push(item.title)
+                  date.push(item.date)
+                  summary.push(item.summary)
+                  route.push(item.title)
                  
 
-               
-                  for (var i = 0; i < toconverttitle.length; i++) { //For each of the routes
-                     toconvertroute[i] = toconvertroute[i].substr(7);//Subtracts the first 7 Charchters 
-                     toconvertroute[i] = toconvertroute[i].slice(0,-39)//And the last 39 to create a route
-                     //Convert eveything into a string. This is so the Databse does record each entries as an array with one item.
-                     date = String(toconvertdate); 
-                     title = String(toconverttitle);
-                     summary = String(toconvertsummary);
-                     route = String(toconvertroute);
+              
 
-               }
-
-                  //Creates a query and sends the values to a special DB for later comparison
-                  //This is to elimate an issue with global variables
-                  client.query({
-                      name: 'insert to server check DB',
-                      text: "INSERT INTO server(delay_title, delay_date, delay_summary, route) values($1, $2, $3, $4)",
-                      values: [title, date, summary, route]
-});
-                     
-
-                     console.log("Title: " + title)
-                     console.log("Date:" + date)
-                     console.log("Route: " + route)
-                    console.log("Summary: " + summary)
-                  console.log("      ");//Even more whitespace
+                
                   }
                }
              );
@@ -143,67 +137,29 @@ function feedprocess(){
 
 //New function to check the data
 function dataread(){ 
-
-                      var query = client.query("SELECT delay_id, delay_title, delay_date FROM delay "); //starts a query to grab the info from a database to make sure we are not double commiting.
-                      //Clears the arrays from above; 
-                      id = []
-                      title = []
-                      date = []
-                      summary = []
-                      route = []
-                      query.on('row', function(row) {
-
-                          //Pushes each item to a Array
-                          title.push(row.delay_title);
-                          date.push(row.delay_date)
-                          summary.push(row.delay_summary)
-                          route.push(row.route)
-                          id.push(row.delay_id)
-                        });
-
-                      query.on("end", function (result) { //Ends our query but...
-                        //Starts the second query to check the info above
-                     var query2 = client.query("SELECT id, delay_title, delay_date FROM server ");
-                     query2.on('row', function(row) {
+ 
+                     var query = client.query("SELECT delay_id, delay_title, delay_date, delay_summary, route FROM delay ");
+                     query.on('row', function(row) {
                           //Pushes the second set of data
                           comparetitle.push(row.delay_title);
                           comparedate.push(row.delay_date)
                           comparesummary.push(row.delay_summary)
                           compareroute.push(row.route)
-                          compareid.push(row.id)
+                          compareid.push(row.compare_id)
                         });
 
-                      query2.on("end", function (result) {
+                      query.on("end", function (result) {
 
-                        //Now its time to sort the information.
-                        for (i = 0; i < comparedate.length; i++) {
-                          var bl = false;
-                          for (j = 0; j < date.length; j++) {
-                            if (date[i] != date[j]) {
-                              bl = true;
+                      for (var i = 0; i < title.length; ++i) {
+                      console.log(title[i])
+                    
+                      console.log(date[i])
+                      console.log(summary[i])
+                      console.log(route[i])
+                      console.log("  ")
+                    }
 
-    if (bl) {
-
-
-      console.log(" find match for : " 
-        + compareid[i] 
-        + " " 
-        + comparetitle[i]
-        + " "
-        + comparedate[i]);
-      console.log("   ")
-
-
-  }
-
-                              }
-
-    }
-
-}
                       });
-                      });
-             
 }
 
 //Starts the webserver
