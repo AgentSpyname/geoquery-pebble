@@ -31,12 +31,17 @@ var comparesummary = [];
 var compareroute = [];
 var compareid = [];
 
+
 //Defines Title, Route, Date and Summary for Later
 var title = [];
 var route = [];
 var date = [];
 var summary = [];
+var id = [];
+var tag = [];
+var assignid = 0;
 var toconvertdate = []; 
+
 
 //Prevents Duplicate COmmits
 var dontcommit = [];
@@ -46,6 +51,10 @@ var newconvertdate = [];
 var newconverttitle= [];
 var newconvertsummary = [];
 var newconvertrotue = [];
+var pebbleid = [];
+whitelist = [];
+var cleanlist = [];
+var oldroute = [];
 //Executes Main Functions
 refresh();
 
@@ -63,6 +72,11 @@ setTimeout(function(){
     dataread();
   },delay)
 
+ 
+   
+
+
+
     setTimeout(arguments.callee, 20000); //Timeout of 20 Seconds
 })();
 }
@@ -73,7 +87,7 @@ setTimeout(function(){
 
 //Funtion to Proces Data from Server
 function feedprocess(){
-  done = false;
+  cleanlist = [];
   //Initiliazes PG Database Connection
  client = new pg.Client(conString);
 client.connect();
@@ -85,6 +99,19 @@ client.connect();
 
 
 dontcommit = [];
+ title =[];
+                  date = [];
+                  summary = [];
+                  route = [];
+
+
+                          comparetitle = []
+                          comparedate = []
+                          comparesummary = []
+                          compareroute = []
+                          compareid = []
+                          pebbleid = []
+                          tag = [];
 
   console.log("Requesting XML File from: " + xml) 
     //Loads Feedparser
@@ -121,13 +148,16 @@ dontcommit = [];
        //Checks each item from the RSS 
                   //Assigns each item to an array.
 
+        
                   title.push(item.title)
-                  date.push(item.date)
+                  date.push(String(item.date))
                   summary.push(item.summary)
                   route.push(item.title)
-                 
 
-              
+                  
+
+
+                  id.push(assignid = assignid + 1)
 
                 
                   }
@@ -137,15 +167,27 @@ dontcommit = [];
 
 //New function to check the data
 function dataread(){ 
+                //Generate the Route Number
+
+                for (var r=0; r< route.length; r++){
+                     route[r] = route[r].substr(7,4);
+                }
+             
+// newArray: ["Ri", "La"]
+  
+  
+
+// newArray: ["Ri", "La"]
  
-                     var query = client.query("SELECT delay_id, delay_title, delay_date, delay_summary, route FROM delay ");
+                     var query = client.query("SELECT delay_id, delay_title, delay_date, delay_summary, route, pebbleid FROM delay ");
                      query.on('row', function(row) {
                           //Pushes the second set of data
                           comparetitle.push(row.delay_title);
                           comparedate.push(row.delay_date)
                           comparesummary.push(row.delay_summary)
                           compareroute.push(row.route)
-                          compareid.push(row.compare_id)
+                          compareid.push(row.delay_id)
+                          pebbleid.push(row.pebbleid)
                         });
 
                       query.on("end", function (result) {
@@ -156,11 +198,106 @@ function dataread(){
                       console.log(date[i])
                       console.log(summary[i])
                       console.log(route[i])
+
+                      
                       console.log("  ")
                     }
 
-                      });
+                    //Now its time to sort the information.
+                    
+                    var largest= 0;
+
+                    for (l=0; l<=largest;l++){
+                    if (compareid[l] >largest) {
+                    var largest=compareid[l];
+    }
 }
+
+
+
+
+
+
+                    var today = new Date()
+                    var curHr = today.getHours();
+
+                    if(curHr<12){
+                  
+                       timegreeting = "morning";
+                      } 
+                    else if(curHr<18){
+                  
+                    timegreeting = "afternoon";
+                      }
+
+                    else{
+                     
+                      timegreeting = "evening";
+                      }
+
+
+                    for (x = 0; x < title.length; x++) {
+                      var random = Math.random();
+                      var newend = largest + 1
+                       newpebbleid = "geoquery-" + timegreeting + route[x];
+                       console.log(newpebbleid)
+
+                      
+                      for(y = 0; y < pebbleid.length; y++ ){
+                        if (pebbleid[y] == newpebbleid){
+                        console.log("An entry found within the database matches this ID:" + pebbleid[y])
+                        id.push(newpebbleid)
+                        tag.push("w")
+                        
+                        
+
+    }
+
+    else{
+                
+                        id.push(newpebbleid)
+                        tag.push("c")
+                        }
+
+  }
+
+ 
+
+
+  }
+
+console.log(" ")
+for (z = 0; z < title.length; z++ ){
+
+
+  if (tag[z] == "w"){
+    console.log("Whitelisted")
+    console.log(title[z])
+    console.log(date[z])
+    console.log(summary[z])
+  }
+  console.log(" ")
+   if (tag[z] == "c"){
+    console.log("Cleanlisted")
+    console.log(title[z])
+    console.log(date[z])
+    console.log(summary[z])
+  }
+}
+
+}
+
+
+                      );
+
+
+}
+
+
+
+  
+
+
 
 //Starts the webserver
 var server = app.listen(app.get('port'), function () {
