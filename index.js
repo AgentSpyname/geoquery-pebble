@@ -4,6 +4,8 @@ var request = require('request');
 var FeedParser = require('feedparser')
   , request = require('request');
   var Timeline = require('pebble-api');
+  var $ = require('jquery');
+  var _ = require('underscore')
 
 
 //Configuration Variables
@@ -30,8 +32,8 @@ var comparedate = [];
 var comparesummary = [];
 var compareroute = [];
 var compareid = [];
-
-
+var brandnewpebbleid = [];
+brandnewid = [];
 //Defines Title, Route, Date and Summary for Later
 var title = [];
 var route = [];
@@ -45,6 +47,7 @@ var toconvertdate = [];
 
 //Prevents Duplicate COmmits
 var dontcommit = [];
+var end;
 
 //More comparisions 
 var newconvertdate = [];
@@ -64,6 +67,8 @@ function refresh(){
   //Sets two delay variabls
   var delay = 5000;
   var delay2 = 7000;
+  console.log("List for Debug of All Variables")
+  var text='';
 
 
   feedprocess();
@@ -87,15 +92,16 @@ setTimeout(function(){
 
 //Funtion to Proces Data from Server
 function feedprocess(){
+  if (end){
+      client.end()
+  }
+
   cleanlist = [];
   //Initiliazes PG Database Connection
  client = new pg.Client(conString);
 client.connect();
   console.log("Cleaning up...")
-      client.query({
-                      name: 'clean up the server db',
-                      text: "DELETE FROM server"
-});
+    
 
 
 dontcommit = [];
@@ -112,6 +118,8 @@ dontcommit = [];
                           compareid = []
                           pebbleid = []
                           tag = [];
+                          brandnewpebbleid = [];
+                          newpebbleid = [];
 
   console.log("Requesting XML File from: " + xml) 
     //Loads Feedparser
@@ -157,7 +165,7 @@ dontcommit = [];
                   
 
 
-                  id.push(assignid = assignid + 1)
+
 
                 
                   }
@@ -172,12 +180,13 @@ function dataread(){
                 for (var r=0; r< route.length; r++){
                      route[r] = route[r].substr(7,4);
                 }
-             
-// newArray: ["Ri", "La"]
-  
-  
 
-// newArray: ["Ri", "La"]
+                summary = summary 
+             
+
+             
+
+
  
                      var query = client.query("SELECT delay_id, delay_title, delay_date, delay_summary, route, pebbleid FROM delay ");
                      query.on('row', function(row) {
@@ -235,68 +244,140 @@ function dataread(){
                       timegreeting = "evening";
                       }
 
+             
 
+                    
                     for (x = 0; x < title.length; x++) {
                       var random = Math.random();
                       var newend = largest + 1
                        newpebbleid = "geoquery-" + timegreeting + route[x];
+                       brandnewpebbleid.push(newpebbleid)
+
                        console.log(newpebbleid)
 
+                        for(y = 0; y < compareroute.length; y++ ){
+                       if (newpebbleid.indexOf(pebbleid[y]) > -1){
+                          if (comparedate[y] == date[x]){ 
+                            console.log("comparetitle equals")
+                            
+                          }
+
+                          if (comparedate[y] != date[x]){
+                            console.log("Update existing pin...")
+                            var query = client.query("DELETE FROM delay WHERE pebbleid ='"+newpebbleid +"'"); 
+                            query.on("end", function (result) {          
+                            
+                            
+                        
+        });  
+
+                      client.query({
+                      name: 'insert to   DB',
+                      text: "INSERT INTO delay(delay_title, delay_date, delay_summary,route, pebbleid) values($1, $2, $3, $4,$5)",
+                      values: [title[x], date[x], summary[x], route[x], newpebbleid]
+});
+
+                      console.log("Success")
+                   
+                          }
+                        
+
+
+
+                       }
+
+
+
+}
+
+
                       
-                      for(y = 0; y < pebbleid.length; y++ ){
-                        if (pebbleid[y] == newpebbleid){
-                        console.log("An entry found within the database matches this ID:" + pebbleid[y])
-                        id.push(newpebbleid)
-                        tag.push("w")
-                        
-                        
-
-    }
-
-    else{
-                
-                        id.push(newpebbleid)
-                        tag.push("c")
-                        }
-
-  }
-
- 
 
 
-  }
+}
 
 console.log(" ")
-for (z = 0; z < title.length; z++ ){
-
-
-  if (tag[z] == "w"){
-    console.log("Whitelisted")
-    console.log(title[z])
-    console.log(date[z])
-    console.log(summary[z])
-  }
-  console.log(" ")
-   if (tag[z] == "c"){
-    console.log("Cleanlisted")
-    console.log(title[z])
-    console.log(date[z])
-    console.log(summary[z])
-  }
-}
-
-}
-
-
-                      );
-
-
-}
-
-
 
   
+      for(np = 0; np < pebbleid.length; np++){
+ if (newpebbleid.indexOf(pebbleid[np]) == -1){
+                        
+                        cleanlist.push(newpebbleid)
 
+                       }
+
+                     
+ }
+
+var uniqueCleanlist = [];
+$.each(cleanlist, function(i, el){
+    if($.inArray(el, uniqueCleanlist) === -1) uniqueCleanlist.push(el);
+}); 
+
+for (pi = 0; pi < pebbleid.length; pi++){
+  var sendpebbleid = _.filter(uniqueCleanlist, function(check){ return check  != pebbleid[pi]; });
+ 
+}
+
+
+
+
+sendroute = [];
+for (var ssp=0; ssp< sendpebbleid.length; ssp++){
+
+                     sendroute[ssp] = sendpebbleid[ssp].substr(16);
+                }
+
+    
+
+  for (sr = 0; sr < sendroute.length; sr++){
+     for (tt = 0; tt < title.length; tt++){
+      if (title[tt].indexOf(sendroute[sr]) > -1){
+    console.log(title[tt])
+    console.log(sendroute[sr])
+
+        client.query({
+                      name: 'insert to   DB',
+                      text: "INSERT INTO delay(delay_title, delay_date, delay_summary,route, pebbleid) values($1, $2, $3, $4,$5)",
+                      values: [title[tt], "Fri Apr 17 2015 16:50:44 GMT-0400 (EDT)", "nilfornow", sendroute[sr], "geoquery-morning0002"]
+});
+  }
+  }
+
+ }
+ 
+  
+
+
+
+
+
+                     }
+
+                   
+                                                
+                      
+
+
+                       
+                       
+
+                   
+                      
+
+
+                      
+                     
+
+                    
+
+
+
+);
+
+end = true;
+}
+//Function to check array
 
 
 //Starts the webserver
