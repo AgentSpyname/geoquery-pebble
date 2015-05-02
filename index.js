@@ -5,7 +5,11 @@ var FeedParser = require('feedparser')
   , request = require('request');
   var Timeline = require('pebble-api');
   var $ = require('jquery');
-  var _ = require('underscore')
+  var _ = require('underscore');
+var jf = require('jsonfile')
+var util = require('util')
+
+
 
 
 //Configuration Variables
@@ -25,6 +29,11 @@ app.set('port', (process.env.PORT || 3000));
 var pg = require('pg');
 var conString = 'postgres://localhost:5432/stopr';
 
+
+
+
+var server_items = [];
+///ALL DEPRECTATED NOW
 //Intializes Variables for Comparision Checks and Other Functions
 //These Variables Compare DB Entries with the Server
 var comparetitle = [];
@@ -101,25 +110,7 @@ function feedprocess(){
  client = new pg.Client(conString);
 client.connect();
   console.log("Cleaning up...")
-    
-
-
-dontcommit = [];
- title =[];
-                  date = [];
-                  summary = [];
-                  route = [];
-
-
-                          comparetitle = []
-                          comparedate = []
-                          comparesummary = []
-                          compareroute = []
-                          compareid = []
-                          pebbleid = []
-                          tag = [];
-                          brandnewpebbleid = [];
-                          newpebbleid = [];
+  server_items = [];
 
   console.log("Requesting XML File from: " + xml) 
     //Loads Feedparser
@@ -155,18 +146,13 @@ dontcommit = [];
       while (item = stream.read()) {
        //Checks each item from the RSS 
                   //Assigns each item to an array.
+             
 
-        
+                         
                   title.push(item.title)
                   date.push(String(item.date))
                   summary.push(item.summary)
                   route.push(item.title)
-
-                  
-
-
-
-
                 
                   }
                }
@@ -183,49 +169,8 @@ function dataread(){
 
                 summary = summary 
              
-
-             
-
-
- 
-                     var query = client.query("SELECT delay_id, delay_title, delay_date, delay_summary, route, pebbleid FROM delay ");
-                     query.on('row', function(row) {
-                          //Pushes the second set of data
-                          comparetitle.push(row.delay_title);
-                          comparedate.push(row.delay_date)
-                          comparesummary.push(row.delay_summary)
-                          compareroute.push(row.route)
-                          compareid.push(row.delay_id)
-                          pebbleid.push(row.pebbleid)
-                        });
-
-                      query.on("end", function (result) {
-
-                      for (var i = 0; i < title.length; ++i) {
-                      console.log(title[i])
-                    
-                      console.log(date[i])
-                      console.log(summary[i])
-                      console.log(route[i])
-
-                      
-                      console.log("  ")
-                    }
-
                     //Now its time to sort the information.
-                    
-                    var largest= 0;
-
-                    for (l=0; l<=largest;l++){
-                    if (compareid[l] >largest) {
-                    var largest=compareid[l];
-    }
-}
-
-
-
-
-
+    
 
                     var today = new Date()
                     var curHr = today.getHours();
@@ -246,12 +191,44 @@ function dataread(){
 
              
 
+                    console.log(route)
+            
+var myarray = [];
+var myJSON = "";
+
+for (var i = 0; i < route.length; i++) {
+
+    var item = {
+        "title": title[i],
+        "date": date[i],
+        "summary": summary[i],
+        "route": route[i],
+        "pebbleid": "geoquery-" + timegreeting + route[i]
+        
+    };
+
+    myarray.push(item);
+}
+
+
+  myJSON = ({delays: myarray});
+  
+
+for (x = 0; x < myJSON.delays.length; x++){
+  console.log(myJSON.delays[x].title)
+}
+
+
+}
+
+
+
+
+
+
                     
-                    for (x = 0; x < title.length; x++) {
-                      var random = Math.random();
-                      var newend = largest + 1
-                       newpebbleid = "geoquery-" + timegreeting + route[x];
-                       brandnewpebbleid.push(newpebbleid)
+                  
+                      /*
 
                        console.log(newpebbleid)
 
@@ -379,6 +356,7 @@ end = true;
 }
 //Function to check array
 
+*/
 
 //Starts the webserver
 var server = app.listen(app.get('port'), function () {
