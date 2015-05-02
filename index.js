@@ -214,10 +214,35 @@ for (var i = 0; i < route.length; i++) {
   myJSON = ({delays: myarray});
   
 
-for (x = 0; x < myJSON.delays.length; x++){
+
+var file = 'data.json'
+jf.readFile(file, function(err, obj) {
+  console.log("FROM JSON");
+  console.log(util.inspect(obj.delays[0].title))
+  for (x = 0; x < myJSON.delays.length; x++){
+  for (j = 0; j < obj.delays.length; j++){
   console.log(myJSON.delays[x].title)
+
+  }
+  
 }
 
+
+})
+
+
+
+
+console.log(myJSON)
+
+var file = 'data.json'
+
+jf.writeFile(file, myJSON, function(err) {
+  console.log("to json")
+    console.log(err)
+
+  
+})
 
 }
 
