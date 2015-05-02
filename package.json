@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.12.3",
     "feedparser": "^1.0.0",
+    "jsonfile": "^2.0.0",
     "node-static": "^0.7.6",
     "pg": "^4.3.0",
     "primus": "^3.0.2",
