@@ -26,8 +26,8 @@ var routeno = "0000"; //Testing
 
 var app = express();
 app.set('port', (process.env.PORT || 3000));
-var pg = require('pg');
-var conString = 'postgres://localhost:5432/stopr';
+//var pg = require('pg');
+//var conString = 'postgres://localhost:5432/stopr';
 
 
 
@@ -76,7 +76,6 @@ function refresh(){
   //Sets two delay variabls
   var delay = 5000;
   var delay2 = 7000;
-  console.log("List for Debug of All Variables")
   var text='';
 
 
@@ -101,14 +100,12 @@ setTimeout(function(){
 
 //Funtion to Proces Data from Server
 function feedprocess(){
-  if (end){
-      client.end()
-  }
+ route = [];
 
   cleanlist = [];
   //Initiliazes PG Database Connection
- client = new pg.Client(conString);
-client.connect();
+ //client = new pg.Client(conString);
+//client.connect();
   console.log("Cleaning up...")
   server_items = [];
 
@@ -190,9 +187,11 @@ function dataread(){
                       }
 
              
-
+                    console.log("debug variables")
                     console.log(route)
-            
+                    console.log(date)
+
+                 
 var myarray = [];
 var myJSON = "";
 
@@ -208,34 +207,38 @@ for (var i = 0; i < route.length; i++) {
     };
 
     myarray.push(item);
+
+ 
+
 }
+
 
 
   myJSON = ({delays: myarray});
   
-
-
+whitelist = [];
 var file = 'data.json'
 jf.readFile(file, function(err, obj) {
   console.log("FROM JSON");
-  console.log(util.inspect(obj.delays[0].title))
-  for (x = 0; x < myJSON.delays.length; x++){
-  for (j = 0; j < obj.delays.length; j++){
-  console.log(myJSON.delays[x].title)
+  for (p = 0; p < obj.delays.length; p++){
+
+      if (obj.delays[p].pebbleid == myJSON.delays[p].pebbleid){
+   
+        whitelist.push(myJSON.delays[p].pebbleid)
+        
+      }
 
   }
-  
-}
+     
+console.log(whitelist)
+for (y = 0; y < myJSON.delays.length; y++){
+  if (whitelist[y] == myJSON.delays[y].pebbleid){
+    console.log("Already sent.")
+  }
 
-
-})
-
-
-
-
-console.log(myJSON)
-
-var file = 'data.json'
+  if(whitelist[y] != myJSON.delays[y].pebbleid){
+    console.log("Sending...")
+    var file = 'data.json'
 
 jf.writeFile(file, myJSON, function(err) {
   console.log("to json")
@@ -243,146 +246,14 @@ jf.writeFile(file, myJSON, function(err) {
 
   
 })
-
-}
-
-
-
-
-
-
-                    
-                  
-                      /*
-
-                       console.log(newpebbleid)
-
-                        for(y = 0; y < compareroute.length; y++ ){
-                       if (newpebbleid.indexOf(pebbleid[y]) > -1){
-                          if (comparedate[y] == date[x]){ 
-                            console.log("comparetitle equals")
-                            
-                          }
-
-                          if (comparedate[y] != date[x]){
-                            console.log("Update existing pin...")
-                            var query = client.query("DELETE FROM delay WHERE pebbleid ='"+newpebbleid +"'"); 
-                            query.on("end", function (result) {          
-                            
-                            
-                        
-        });  
-
-                      client.query({
-                      name: 'insert to   DB',
-                      text: "INSERT INTO delay(delay_title, delay_date, delay_summary,route, pebbleid) values($1, $2, $3, $4,$5)",
-                      values: [title[x], date[x], summary[x], route[x], newpebbleid]
-});
-
-                      console.log("Success")
-                   
-                          }
-                        
-
-
-
-                       }
-
-
-
-}
-
-
-                      
-
-
-}
-
-console.log(" ")
-
-  
-      for(np = 0; np < pebbleid.length; np++){
- if (newpebbleid.indexOf(pebbleid[np]) == -1){
-                        
-                        cleanlist.push(newpebbleid)
-
-                       }
-
-                     
- }
-
-var uniqueCleanlist = [];
-$.each(cleanlist, function(i, el){
-    if($.inArray(el, uniqueCleanlist) === -1) uniqueCleanlist.push(el);
-}); 
-
-for (pi = 0; pi < pebbleid.length; pi++){
-  var sendpebbleid = _.filter(uniqueCleanlist, function(check){ return check  != pebbleid[pi]; });
- 
-}
-
-
-
-
-sendroute = [];
-for (var ssp=0; ssp< sendpebbleid.length; ssp++){
-
-                     sendroute[ssp] = sendpebbleid[ssp].substr(16);
-                }
-
-    
-
-  for (sr = 0; sr < sendroute.length; sr++){
-     for (tt = 0; tt < title.length; tt++){
-      if (title[tt].indexOf(sendroute[sr]) > -1){
-    console.log(title[tt])
-    console.log(sendroute[sr])
-
-        client.query({
-                      name: 'insert to   DB',
-                      text: "INSERT INTO delay(delay_title, delay_date, delay_summary,route, pebbleid) values($1, $2, $3, $4,$5)",
-                      values: [title[tt], "Fri Apr 17 2015 16:50:44 GMT-0400 (EDT)", "nilfornow", sendroute[sr], "geoquery-morning0002"]
-});
-  }
   }
 
- }
- 
-  
-
-
-
-
-
-                     }
-
-                   
-                                                
-                      
-
-
-                       
-                       
-
-                   
-                      
-
-
-                      
-                     
-
-                    
-
-
-
-);
-
-end = true;
 }
-//Function to check array
+ 
+})
 
-*/
 
+}
 //Starts the webserver
 var server = app.listen(app.get('port'), function () {
   console.log('Webserver started on port %s', app.get('port'));
