@@ -4,7 +4,6 @@ var request = require('request');
 var FeedParser = require('feedparser')
   , request = require('request');
   var Timeline = require('pebble-api');
-  var $ = require('jquery');
   var _ = require('underscore');
 var jf = require('jsonfile')
 var util = require('util')
