@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+<title>STOPR Example Bus Feed</title>
+<link>pebblestoprtest.net76.net/</link>
+<description>Testing feed for STOPR Bus Tracking App for Pebble Time</description>
+
+<item>
+<title>Route: 0000&nbsp;(473.004)  Status: Delayed 210 minutes</title>
+<link>http://pebblestoprtest.net76.net/bus0000.html</link>
+<guid>http://pebblestoprtest.net76.net/bus0000.html</guid>
+<date>Wed Apr 17 2015 16:53:44 GMT-0400</date>
+<pubDate>Fri Apr 17 2015 16:53:44 GMT-0400</pubDate>
+<summary>Head to hell</summary>
+<description>Head to Hell</description>
+</item>
+
+<item>
+<title>Route: 0001&nbsp;(473.004)  Status: Delayed 420 minutes</title>
+<link>http://pebblestoprtest.net76.net/bus0000.html</link>
+<guid>http://pebblestoprtest.net76.net/bus0000.html</guid>
+<date>Fri Apr 17 2015 17:53:44 GMT-0400</date>
+<pubDate>Fri Apr 17 2015 17:53:44 GMT-0400</pubDate>
+<summary>Head to hell</summary>
+<description>Head to Hell</description>
+</item>
+
+<item>
+<title>Route: 0002&nbsp;(473.004)  Status: Delayed 420 minutes</title>
+<link>http://pebblestoprtest.net76.net/bus0000.html</link>
+<guid>http://pebblestoprtest.net76.net/bus0000.html</guid>
+<date>Fri Apr 17 2015 16:50:44 GMT-0400</date>
+<pubDate>Fri Apr 17 2015 16:50:44 GMT-0400</pubDate>
+<summary>Head to hell</summary>
+<description>Head to Hell</description>
+</item>
