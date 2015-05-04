@@ -108,6 +108,7 @@ function feedprocess(){
 //client.connect();
   console.log("Cleaning up...")
   server_items = [];
+  date = [];
 
   console.log("Requesting XML File from: " + xml) 
     //Loads Feedparser
@@ -202,7 +203,7 @@ for (var i = 0; i < route.length; i++) {
         "date": date[i],
         "summary": summary[i],
         "route": route[i],
-        "pebbleid": "geoquery-" + timegreeting + route[i]
+        "pebbleid": "geoquery-" + timegreeting + route[i] + "(" + date[i] + ")"
         
     };
 
