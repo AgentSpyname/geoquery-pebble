@@ -1,29 +1,20 @@
 {
-    "appKeys": {
-        "action": 2,
-        "quit": 3,
-        "ready": 0,
-        "text": 1
-    },
+    "appKeys": {},
     "capabilities": [
         ""
     ],
-    "companyName": "Pebble Technology",
-    "longName": "timeline-tv-tracker",
+    "companyName": "alexanderparsan28@gmail.com",
+    "longName": "geoquery-pebble",
     "projectType": "native",
     "resources": {
         "media": []
     },
     "sdkVersion": "3",
-    "shortName": "timeline-tv-tracker",
-    "targetPlatforms": [
-        "basalt"
-    ],
-    "uuid": "F46003ED-FB9D-4CB1-8714-A8B4A4772349",
+    "shortName": "geoquery-pebble",
+    "uuid": "090ab3f0-eda3-4a09-a890-7f93974c1787",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": false
     }
 }
-
