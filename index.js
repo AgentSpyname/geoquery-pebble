@@ -236,7 +236,7 @@ jf.readFile(file, function(err, obj) {
   }
 
       app.get('/', function (req, res) {
-        console.log("OBJ")
+        res.send("OBJ")
   res.send(obj);
 });
      
