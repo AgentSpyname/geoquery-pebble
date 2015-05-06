@@ -78,14 +78,8 @@ var oldroute = [];
 
 //Executes Main Functions
 
-client.authDriver(new Dropbox.AuthDriver.NodeServer(8191));
-client.authenticate(function(error, client) {
-  if (error) {
-    return showError(error);
-  }
   refresh();
 
-});
 
 
 
