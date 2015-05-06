@@ -158,6 +158,8 @@ function feedprocess(){
 
 //New function to check the data
 function dataread(){ 
+
+
                 //Generate the Route Number
 
                 for (var r=0; r< route.length; r++){
@@ -246,6 +248,7 @@ jf.writeFile(file, myJSON, function(err) {
 
   
 })
+
   }
 
 }
@@ -253,6 +256,9 @@ jf.writeFile(file, myJSON, function(err) {
 })
 
 
+  app.get('/', function (req, res) {
+  res.send(myJSON);
+});
 }
 //Starts the webserver
 var server = app.listen(app.get('port'), function () {
