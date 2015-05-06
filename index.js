@@ -7,6 +7,14 @@ var FeedParser = require('feedparser')
   var _ = require('underscore');
 var jf = require('jsonfile')
 var util = require('util')
+var Dropbox = require("dropbox");
+
+// Server-side applications use both the API key and secret.
+var client = new Dropbox.Client({
+    key: "w59y122wvbbdo4y",
+    secret: "iydhch46482bcc6"
+});
+
 
 
 
@@ -66,8 +74,21 @@ var pebbleid = [];
 whitelist = [];
 var cleanlist = [];
 var oldroute = [];
+
+
 //Executes Main Functions
-refresh();
+
+client.authDriver(new Dropbox.AuthDriver.NodeServer(8191));
+client.authenticate(function(error, client) {
+  if (error) {
+    return showError(error);
+  }
+  refresh();
+
+});
+
+
+
 
 //Excutes all other functions with a delay every 20 Seconds, used to make sure we can go back here if there is an error.
 function refresh(){
