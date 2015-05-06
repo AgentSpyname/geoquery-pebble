@@ -77,9 +77,7 @@ function refresh(){
   var delay2 = 7000;
   var text='';
 
-    app.get('/', function (req, res) {
-  res.send(myJSON);
-});
+
   feedprocess();
 
 setTimeout(function(){
@@ -219,7 +217,10 @@ for (var i = 0; i < route.length; i++) {
 
 
   myJSON = ({delays: myarray});
-  
+      app.get('/', function (req, res) {
+  res.send(myJSON);
+});
+
 whitelist = [];
 var file = 'data.json'
 jf.readFile(file, function(err, obj) {
@@ -233,6 +234,11 @@ jf.readFile(file, function(err, obj) {
       }
 
   }
+
+      app.get('/', function (req, res) {
+        console.log("OBJ")
+  res.send(obj);
+});
      
 console.log(whitelist)
 for (y = 0; y < myJSON.delays.length; y++){
