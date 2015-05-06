@@ -233,12 +233,12 @@ jf.readFile(file, function(err, obj) {
       }
 
   }
-
+/*
       app.get('/', function (req, res) {
      
   res.send(obj);
 });
-     
+  */   
 console.log(whitelist)
 for (y = 0; y < myJSON.delays.length; y++){
   if (whitelist[y] == myJSON.delays[y].pebbleid){
@@ -266,11 +266,12 @@ jf.writeFile(file, myJSON, function(err) {
 
 
 }
+/*
 //Starts the webserver
 var server = app.listen(app.get('port'), function () {
   console.log('Webserver started on port %s', app.get('port'));
 });
-
+*/
 var connect = require('connect');
 var serveStatic = require('serve-static');
 connect().use(serveStatic(__dirname)).listen(2987);
