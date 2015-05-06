@@ -28,7 +28,7 @@ app.set('port', (process.env.PORT || 3000));
 //var pg = require('pg');
 //var conString = 'postgres://localhost:5432/stopr';
 
-
+var myJSON = ""
 
 
 var server_items = [];
@@ -77,7 +77,9 @@ function refresh(){
   var delay2 = 7000;
   var text='';
 
-
+    app.get('/', function (req, res) {
+  res.send(myJSON);
+});
   feedprocess();
 
 setTimeout(function(){
@@ -256,9 +258,8 @@ jf.writeFile(file, myJSON, function(err) {
 })
 
 
-  app.get('/', function (req, res) {
-  res.send(myJSON);
-});
+
+
 }
 //Starts the webserver
 var server = app.listen(app.get('port'), function () {
