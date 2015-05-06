@@ -106,8 +106,9 @@ function feedprocess(){
  //client = new pg.Client(conString);
 //client.connect();
   console.log("Cleaning up...")
-  server_items = [];
   date = [];
+  title = [];
+  summary = [];
 
   console.log("Requesting XML File from: " + xml) 
     //Loads Feedparser
@@ -217,9 +218,7 @@ for (var i = 0; i < route.length; i++) {
 
 
   myJSON = ({delays: myarray});
-      app.get('/', function (req, res) {
-  res.send(myJSON);
-});
+
 
 whitelist = [];
 var file = 'data.json'
@@ -236,7 +235,7 @@ jf.readFile(file, function(err, obj) {
   }
 
       app.get('/', function (req, res) {
-        res.send("OBJ")
+     
   res.send(obj);
 });
      
@@ -271,4 +270,8 @@ jf.writeFile(file, myJSON, function(err) {
 var server = app.listen(app.get('port'), function () {
   console.log('Webserver started on port %s', app.get('port'));
 });
+
+var connect = require('connect');
+var serveStatic = require('serve-static');
+connect().use(serveStatic(__dirname)).listen(8080);
 
