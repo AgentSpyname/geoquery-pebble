@@ -274,5 +274,5 @@ var server = app.listen(app.get('port'), function () {
 */
 var connect = require('connect');
 var serveStatic = require('serve-static');
-connect().use(serveStatic(__dirname)).listen(2987);
+connect().use(serveStatic(__dirname)).listen(3000);
 
