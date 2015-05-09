@@ -1,7 +1,13 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "KEY_LOCATION": 0,
+        "KEY_TEMPERATURE": 1,
+        "TEST_KEY": 2,
+        "item": 3
+    },
     "capabilities": [
-        ""
+        "location",
+        "configurable"
     ],
     "companyName": "alexanderparsan28@gmail.com",
     "longName": "geoquery-pebble",
@@ -11,6 +17,10 @@
     },
     "sdkVersion": "3",
     "shortName": "geoquery-pebble",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "090ab3f0-eda3-4a09-a890-7f93974c1787",
     "versionCode": 1,
     "versionLabel": "1.0",
