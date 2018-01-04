@@ -1,5 +1,10 @@
 Geoquery for Pebble Timeline
 ===================
+
+Geoquery Pebble was an app designed to track school bus delays and cancelations from the Pebble Time watch. It is defunct.
+
+
+
 The best way to track the school bus.
 ------
 
